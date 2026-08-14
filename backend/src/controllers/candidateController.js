@@ -12,14 +12,27 @@ const { v4: uuidv4 } = require('uuid');
 
 /**
  * Returns the date after which a candidate's cooldown lifts, or null if no cooldown applies.
+ *
+ * Cooldown only applies to candidates who have COMPLETED the interview.
+ * A candidate who was merely invited (status = 'Interview Scheduled') is never blocked —
+ * they should be able to register and take the interview normally.
+ *
+ * The clock starts from `completedAt`, not `createdAt`, so the window is measured
+ * from when the interview was actually finished, not when the invite was sent.
+ *
  * @param {Object} candidate - Existing Candidate doc
  * @param {number} cooldownMonths - Cooldown period in months
  * @returns {Date|null}
  */
 function getCooldownUnlockDate(candidate, cooldownMonths) {
+  // Only enforce cooldown for genuinely completed sessions
+  const hasCompleted =
+    candidate.interviewState === 'Completed' || !!candidate.completedAt;
+  if (!hasCompleted) return null;
+
   const cooldownMs = cooldownMonths * 30 * 24 * 60 * 60 * 1000; // approx months → ms
-  const registeredAt = candidate.createdAt;
-  const unlocksAt = new Date(registeredAt.getTime() + cooldownMs);
+  const referenceDate = candidate.completedAt || candidate.createdAt;
+  const unlocksAt = new Date(referenceDate.getTime() + cooldownMs);
   return unlocksAt > new Date() ? unlocksAt : null;
 }
 
