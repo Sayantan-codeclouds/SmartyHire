@@ -120,7 +120,7 @@ const Register = () => {
             disabled={loading}
             className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-bold text-xs transition-all shadow-lg shadow-indigo-900/40 flex items-center justify-center gap-2 mt-6 cursor-pointer"
           >
-            {loading ? 'Creating Workspace...' : 'Create SimplyHire Workspace'}
+            {loading ? 'Creating Workspace...' : 'Create SmartyHire Workspace'}
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>

@@ -26,7 +26,7 @@ const InterviewCompleted = () => {
 
           <h2 className="text-2xl font-extrabold text-white">Interview Submitted!</h2>
           <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-            Thank you for completing your automated session. Your responses and video logs are currently being processed by the SimplyHire Groq AI Engine.
+            Thank you for completing your automated session. Your responses and evaluation logs are currently being processed by the SmartyHire Groq AI Engine.
           </p>
 
           <div className="my-6 p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs font-mono text-slate-300 space-y-1">
