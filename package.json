@@ -1,0 +1,27 @@
+{
+  "name": "smartyhire-ai",
+  "version": "1.0.0",
+  "description": "Enterprise-Grade Multi-Tenant AI Interviewing & Proctoring SaaS Platform",
+  "private": true,
+  "scripts": {
+    "setup": "npm run setup:backend && npm run setup:frontend",
+    "setup:backend": "cd backend && npm install",
+    "setup:frontend": "cd frontend && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "seed": "cd backend && npm run seed",
+    "build": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "ai",
+    "recruitment",
+    "saas",
+    "interviews",
+    "groq",
+    "react",
+    "express",
+    "mongodb"
+  ],
+  "author": "SmartyHire AI Team",
+  "license": "MIT"
+}
