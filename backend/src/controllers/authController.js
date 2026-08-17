@@ -376,6 +376,29 @@ const resetPassword = async (req, res, next) => {
   }
 };
 
+// Logout — Invalidate Refresh Token
+const logout = async (req, res, next) => {
+  try {
+    // Clear refresh token from DB so it can never be replayed
+    await User.findByIdAndUpdate(req.user.id, { refreshToken: null });
+
+    await logAuditAction({
+      companyId: req.user.companyId,
+      userId: req.user.id,
+      userName: req.user.name,
+      userRole: req.user.role,
+      action: 'USER_LOGOUT',
+      entityType: 'UserSession',
+      entityId: String(req.user.id),
+      details: `User signed out and refresh token invalidated`,
+    });
+
+    res.status(200).json({ success: true, message: 'Signed out successfully.' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   registerCompany,
   login,
@@ -384,4 +407,5 @@ module.exports = {
   refreshToken,
   forgotPassword,
   resetPassword,
+  logout,
 };

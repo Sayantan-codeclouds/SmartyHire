@@ -5,8 +5,9 @@ const Response = require('../models/Response');
 const Report = require('../models/Report');
 const Violation = require('../models/Violation');
 const Company = require('../models/Company');
+const User = require('../models/User');
 const Notification = require('../models/Notification');
-const { sendInterviewInviteEmail } = require('../services/emailService');
+const { sendInterviewInviteEmail, sendCompletionNotificationEmail } = require('../services/emailService');
 const { generateQuestionsWithRAG } = require('../services/groqService');
 const logAuditAction = require('../utils/auditLogger');
 const { v4: uuidv4 } = require('uuid');
@@ -107,6 +108,19 @@ const registerCandidate = async (req, res, next) => {
       });
 
       await Interview.findByIdAndUpdate(interview._id, { $inc: { candidatesCount: 1 } });
+
+      // ── New Candidate notification ──
+      const newCandNotif = await Notification.create({
+        companyId: interview.companyId._id,
+        title: '🙋 New Candidate Applied',
+        message: `${name} has applied for the "${interview.title}" interview and is awaiting their session.`,
+        type: 'New Candidate',
+        link: `/candidates/${candidate._id}`,
+      });
+      const io = req.app.get('io');
+      if (io) {
+        io.to(`company_notify_${interview.companyId._id}`).emit('new_notification', newCandNotif);
+      }
     }
 
     res.status(201).json({
@@ -443,6 +457,14 @@ const completeCandidateInterview = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Candidate not found' });
     }
 
+    // Security: only allow completion from an active in-progress session
+    if (candidate.interviewState === 'Completed') {
+      return res.status(409).json({ success: false, message: 'This interview session has already been completed.' });
+    }
+    if (candidate.interviewState === 'Not Started') {
+      return res.status(400).json({ success: false, message: 'Interview session has not been started yet.' });
+    }
+
     candidate.interviewState = 'Completed';
     candidate.status = 'Interviewed';
     candidate.isExpired = true; // Automatically expire completed interview links
@@ -469,6 +491,20 @@ const completeCandidateInterview = async (req, res, next) => {
     const io = req.app.get('io');
     if (io) {
       io.to(`company_notify_${candidate.companyId}`).emit('new_notification', notification);
+    }
+
+    // ── Email fallback for offline recruiters ──
+    const companyDoc = await Company.findById(candidate.companyId);
+    if (companyDoc && companyDoc.settings?.enableEmailNotifications !== false) {
+      const adminUser = await User.findOne({ companyId: candidate.companyId, role: 'Company Admin' });
+      if (adminUser?.email) {
+        sendCompletionNotificationEmail(
+          adminUser.email,
+          candidate.name,
+          interview?.title || 'Interview',
+          candidate._id
+        ).catch((e) => console.error('[Completion Email]', e.message));
+      }
     }
 
     res.status(200).json({
@@ -591,6 +627,11 @@ const recordViolation = async (req, res, next) => {
     const candidate = await Candidate.findById(candidateId);
     if (!candidate) {
       return res.status(404).json({ success: false, message: 'Candidate not found' });
+    }
+
+    // Security: only log violations for active in-progress sessions
+    if (candidate.interviewState !== 'In Progress') {
+      return res.status(400).json({ success: false, message: 'Violations can only be recorded for active sessions.' });
     }
 
     const violation = await Violation.create({

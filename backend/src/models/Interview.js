@@ -44,7 +44,7 @@ const interviewSchema = new mongoose.Schema(
     },
     salaryRange: {
       type: String,
-      default: '$80,000 - $120,000',
+      default: '',
     },
     durationMinutes: {
       type: Number,

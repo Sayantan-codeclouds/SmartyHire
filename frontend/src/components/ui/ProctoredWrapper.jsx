@@ -1,28 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import { ShieldAlert, AlertTriangle } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { ShieldAlert, ShieldX } from 'lucide-react';
 import { useSocket } from '../../context/SocketContext';
 import api from '../../services/api';
 
-const ProctoredWrapper = ({ candidateId, interviewId, companyId, enabled = true, children, onViolation }) => {
+const ProctoredWrapper = ({
+  candidateId,
+  interviewId,
+  companyId,
+  enabled = true,
+  maxViolations = 5,
+  children,
+  onViolation,
+  onTerminate,
+}) => {
   const { socket } = useSocket();
   const [violations, setViolations] = useState([]);
   const [warningModal, setWarningModal] = useState(null);
+  const [terminated, setTerminated] = useState(false);
+  const violationCount = useRef(0);
 
   const registerViolation = (type, details) => {
-    if (!enabled) return;
+    if (!enabled || terminated) return;
+
+    violationCount.current += 1;
+    const count = violationCount.current;
 
     const newViolation = {
       type,
       details,
       timestamp: new Date().toLocaleTimeString(),
+      count,
     };
 
     setViolations((prev) => [...prev, newViolation]);
     setWarningModal(newViolation);
 
-    if (onViolation) {
-      onViolation(newViolation);
-    }
+    if (onViolation) onViolation(newViolation);
 
     // Log violation to MongoDB backend
     if (candidateId) {
@@ -32,7 +45,7 @@ const ProctoredWrapper = ({ candidateId, interviewId, companyId, enabled = true,
         companyId,
         type,
         details,
-        severity: 'medium',
+        severity: count >= maxViolations - 1 ? 'high' : 'medium',
       }).catch(() => {});
     }
 
@@ -44,8 +57,15 @@ const ProctoredWrapper = ({ candidateId, interviewId, companyId, enabled = true,
         companyId,
         type,
         details,
-        severity: 'medium',
+        severity: count >= maxViolations - 1 ? 'high' : 'medium',
       });
+    }
+
+    // Auto-terminate session when max violations reached
+    if (count >= maxViolations) {
+      setTerminated(true);
+      setWarningModal(null);
+      if (onTerminate) onTerminate();
     }
   };
 
@@ -95,7 +115,34 @@ const ProctoredWrapper = ({ candidateId, interviewId, companyId, enabled = true,
       document.removeEventListener('paste', handleCopyPaste);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [enabled, candidateId]);
+  }, [enabled, candidateId, terminated]);
+
+  // ── Session Terminated Overlay ──────────────────────────────────────────────
+  if (terminated) {
+    return (
+      <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-xl">
+        <div className="max-w-md w-full glass-card p-8 rounded-3xl border border-rose-500/50 shadow-2xl text-center space-y-5 animate-fade-in">
+          <div className="w-20 h-20 rounded-full bg-rose-500/20 border border-rose-500/40 flex items-center justify-center mx-auto">
+            <ShieldX className="w-10 h-10 text-rose-400" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-extrabold text-white">Session Terminated</h2>
+            <p className="text-sm text-rose-400 font-semibold mt-1">Maximum violations exceeded</p>
+          </div>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Your interview session has been automatically terminated due to repeated proctoring violations
+            ({maxViolations}/{maxViolations} violations recorded). Your responses up to this point have been saved.
+          </p>
+          <div className="p-3 rounded-xl bg-rose-950/30 border border-rose-900/40 text-xs font-mono text-rose-300">
+            {violations.length} violation{violations.length !== 1 ? 's' : ''} logged · Session auto-closed
+          </div>
+          <p className="text-[11px] text-slate-500">
+            The hiring team has been notified. You may close this window.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen">
@@ -116,8 +163,19 @@ const ProctoredWrapper = ({ candidateId, interviewId, companyId, enabled = true,
               {warningModal.details}
             </div>
 
-            <p className="text-xs text-slate-400 mb-6">
-              This action has been logged into your candidate evaluation report. Continued violations will automatically terminate the session.
+            {/* Violation counter */}
+            <div className="flex items-center justify-center gap-1 mb-4">
+              {Array.from({ length: maxViolations }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-2.5 h-2.5 rounded-full ${
+                    i < warningModal.count ? 'bg-rose-500' : 'bg-slate-700'
+                  }`}
+                />
+              ))}
+            </div>
+            <p className="text-[11px] text-slate-500 mb-4">
+              Violation {warningModal.count} of {maxViolations} — session will be auto-terminated at {maxViolations}
             </p>
 
             <button

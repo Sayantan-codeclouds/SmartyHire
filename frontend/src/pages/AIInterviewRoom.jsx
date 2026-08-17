@@ -521,12 +521,14 @@ const AIInterviewRoom = () => {
   // Interview Room
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <ProctoredWrapper
+  <ProctoredWrapper
       candidateId={candidateId}
       interviewId={interview?._id}
       companyId={candidate?.companyId}
       enabled={true}
+      maxViolations={interview?.proctoring?.maxViolationsAllowed || 5}
       onViolation={() => setViolationsCount(p => p + 1)}
+      onTerminate={handleSubmit}
     >
       <CandidateLayout>
         {/* ── Top HUD Bar ─────────────────────────────────────────────── */}

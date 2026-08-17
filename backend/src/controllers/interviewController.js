@@ -26,6 +26,24 @@ const createInterview = async (req, res, next) => {
       rounds,
     } = req.body;
 
+    // ── Interview Quota Check ──────────────────────────────────────────────────
+    const Company = require('../models/Company');
+    const company = await Company.findById(req.companyId);
+    if (company) {
+      const used = company.subscription?.usedInterviewsThisMonth ?? 0;
+      const quota = company.subscription?.monthlyInterviewQuota ?? 10;
+      if (used >= quota) {
+        return res.status(403).json({
+          success: false,
+          message: `Monthly interview quota reached (${used}/${quota}). Please upgrade your plan or wait until next month.`,
+          quotaExceeded: true,
+          used,
+          quota,
+        });
+      }
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     const targetQuestionCount = Number(aiConfig?.questionCount) || 6;
     const targetDurationMinutes = Number(durationMinutes) || 30;
 
@@ -92,6 +110,13 @@ const createInterview = async (req, res, next) => {
     }));
 
     await Question.insertMany(questionDocs);
+
+    // ── Increment quota usage counter ──
+    if (company) {
+      await Company.findByIdAndUpdate(req.companyId, {
+        $inc: { 'subscription.usedInterviewsThisMonth': 1 },
+      });
+    }
 
     // Audit log interview creation
     await logAuditAction(

@@ -55,6 +55,17 @@ const Navbar = ({ onOpenCommandPalette }) => {
     };
   }, [socket, company?._id]);
 
+  // Re-fetch when tab regains focus (catches missed notifications during socket sleep)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchNotifications();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [user]);
+
   const markAllRead = async () => {
     try {
       await api.put('/notifications/read-all');

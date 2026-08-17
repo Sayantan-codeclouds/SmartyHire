@@ -4,6 +4,17 @@ import api from '../services/api';
 import CandidateLayout from '../components/layout/CandidateLayout';
 import { Briefcase, Clock, ShieldCheck, Video, Mic, CheckCircle2, ArrowRight } from 'lucide-react';
 
+const setMetaTag = (property, content) => {
+  let el = document.querySelector(`meta[property="${property}"]`) ||
+            document.querySelector(`meta[name="${property}"]`);
+  if (!el) {
+    el = document.createElement('meta');
+    el.setAttribute(property.startsWith('og:') ? 'property' : 'name', property);
+    document.head.appendChild(el);
+  }
+  el.setAttribute('content', content);
+};
+
 const PublicInterviewLanding = () => {
   const { publicId } = useParams();
   const navigate = useNavigate();
@@ -17,7 +28,18 @@ const PublicInterviewLanding = () => {
       try {
         const res = await api.get(`/interviews/public/${publicId}`);
         if (res.data.success) {
-          setInterview(res.data.interview);
+          const iv = res.data.interview;
+          setInterview(iv);
+
+          // ── OG / SEO meta tags ──
+          const title = `${iv.title} — ${iv.company?.name || 'AI Interview'} | SmartyHire`;
+          const desc = `Apply for ${iv.jobRole} at ${iv.company?.name}. ${iv.durationMinutes}-minute AI-powered interview. Powered by SmartyHire.`;
+          document.title = title;
+          setMetaTag('og:title', title);
+          setMetaTag('og:description', desc);
+          setMetaTag('og:type', 'website');
+          setMetaTag('og:site_name', 'SmartyHire AI');
+          setMetaTag('description', desc);
         }
       } catch (err) {
         setError(err.response?.data?.message || 'Interview link is invalid or expired.');
@@ -26,6 +48,10 @@ const PublicInterviewLanding = () => {
       }
     }
     fetchInterview();
+
+    return () => {
+      document.title = 'SmartyHire AI';
+    };
   }, [publicId]);
 
   if (loading) {
