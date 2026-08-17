@@ -6,6 +6,7 @@ const Violation = require('../models/Violation');
 const Report = require('../models/Report');
 const Question = require('../models/Question');
 const KnowledgeDocument = require('../models/KnowledgeDocument');
+const Notification = require('../models/Notification');
 const { generateFollowUpQuestion, evaluateCandidateResponses, answerCandidateQuestionWithRAG } = require('../services/groqService');
 
 // Generate Adaptive Follow-Up Question during Live Interview
@@ -81,6 +82,21 @@ const evaluateCandidateSession = async (req, res, next) => {
     candidate.recommendation = report.recommendation;
     candidate.violationsCount = violations.length;
     await candidate.save();
+
+    // ── Persist AI evaluation notification ──
+    const evalNotification = await Notification.create({
+      companyId: candidate.companyId,
+      title: '🤖 AI Evaluation Complete',
+      message: `Scorecard for ${candidate.name} is ready. Score: ${report.overallScore}/100 — Recommendation: ${report.recommendation || 'Pending'}.`,
+      type: 'AI Finished Evaluation',
+      link: `/candidates/${candidate._id}`,
+    });
+
+    // ── Real-time push to recruiter notification room ──
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`company_notify_${candidate.companyId}`).emit('new_notification', evalNotification);
+    }
 
     res.status(200).json({
       success: true,

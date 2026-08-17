@@ -24,6 +24,14 @@ const setupSocket = (server) => {
       }
     });
 
+    // Join company notification room (dashboard recruiters subscribe here for real-time alerts)
+    socket.on('join_notifications', ({ companyId }) => {
+      if (companyId) {
+        socket.join(`company_notify_${companyId}`);
+        console.log(`[Socket] Dashboard joined notification room for company ${companyId}.`);
+      }
+    });
+
     // Proctoring event triggered by candidate browser
     socket.on('proctor_violation', async (data) => {
       const { candidateId, interviewId, companyId, type, details, severity } = data;

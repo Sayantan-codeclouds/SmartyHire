@@ -5,6 +5,7 @@ const Response = require('../models/Response');
 const Report = require('../models/Report');
 const Violation = require('../models/Violation');
 const Company = require('../models/Company');
+const Notification = require('../models/Notification');
 const { sendInterviewInviteEmail } = require('../services/emailService');
 const { generateQuestionsWithRAG } = require('../services/groqService');
 const logAuditAction = require('../utils/auditLogger');
@@ -448,7 +449,27 @@ const completeCandidateInterview = async (req, res, next) => {
     candidate.completedAt = new Date();
     await candidate.save();
 
-    await Interview.findByIdAndUpdate(candidate.interviewId, { $inc: { completedCount: 1 } });
+    // Fetch the linked interview title for the notification message
+    const interview = await Interview.findByIdAndUpdate(
+      candidate.interviewId,
+      { $inc: { completedCount: 1 } },
+      { new: true }
+    );
+
+    // ── Persist notification to DB ──
+    const notification = await Notification.create({
+      companyId: candidate.companyId,
+      title: '🎉 Interview Completed',
+      message: `${candidate.name} has completed the "${interview?.title || 'Interview'}" interview and is ready for AI evaluation.`,
+      type: 'Interview Completed',
+      link: `/candidates/${candidate._id}`,
+    });
+
+    // ── Real-time push to all dashboard recruiters in this company ──
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`company_notify_${candidate.companyId}`).emit('new_notification', notification);
+    }
 
     res.status(200).json({
       success: true,

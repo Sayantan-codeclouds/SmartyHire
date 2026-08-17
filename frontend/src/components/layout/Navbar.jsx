@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useSocket } from '../../context/SocketContext';
 import api from '../../services/api';
 import ProfileModal from '../ui/ProfileModal';
 import { Search, Bell, Sun, Moon, Sparkles, LogOut, User, Shield, Inbox } from 'lucide-react';
@@ -8,28 +9,51 @@ import { Search, Bell, Sun, Moon, Sparkles, LogOut, User, Shield, Inbox } from '
 const Navbar = ({ onOpenCommandPalette }) => {
   const { user, company, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { socket } = useSocket();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
+  // Fetch notifications from API
+  const fetchNotifications = async () => {
+    if (!user) return;
+    try {
+      const res = await api.get('/notifications');
+      if (res.data.success) {
+        setNotifications(res.data.notifications || []);
+        setUnreadCount(res.data.unreadCount || 0);
+      }
+    } catch (err) {
+      console.error('[Notifications Error]', err);
+    }
+  };
+
   // Fetch real company notifications from backend API
   useEffect(() => {
-    async function fetchNotifications() {
-      if (!user) return;
-      try {
-        const res = await api.get('/notifications');
-        if (res.data.success) {
-          setNotifications(res.data.notifications || []);
-          setUnreadCount(res.data.unreadCount || 0);
-        }
-      } catch (err) {
-        console.error('[Notifications Error]', err);
-      }
-    }
     fetchNotifications();
   }, [user]);
+
+  // Subscribe to real-time notifications via Socket.io
+  useEffect(() => {
+    if (!socket || !company?._id) return;
+
+    // Join the company notification room
+    socket.emit('join_notifications', { companyId: company._id });
+
+    // Handle incoming push notification
+    const handleNewNotification = (notification) => {
+      setNotifications((prev) => [notification, ...prev].slice(0, 20));
+      setUnreadCount((prev) => prev + 1);
+    };
+
+    socket.on('new_notification', handleNewNotification);
+
+    return () => {
+      socket.off('new_notification', handleNewNotification);
+    };
+  }, [socket, company?._id]);
 
   const markAllRead = async () => {
     try {
@@ -105,22 +129,35 @@ const Navbar = ({ onOpenCommandPalette }) => {
                     <p className="text-[11px] text-slate-500 mt-1">New applicant alerts will appear here.</p>
                   </div>
                 ) : (
-                  notifications.map((n, i) => (
-                    <div
-                      key={i}
-                      className={`p-3 rounded-xl border text-xs transition-all ${
-                        !n.isRead
-                          ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-500/30'
-                          : 'bg-slate-50 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800'
-                      }`}
-                    >
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">{n.title}</p>
-                      <p className="text-slate-600 dark:text-slate-400 text-[11px] mt-0.5">{n.message}</p>
-                      <span className="text-[10px] text-slate-400 font-mono mt-1 block">
-                        {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </div>
-                  ))
+                  notifications.map((n, i) => {
+                    const dotColor = {
+                      'Interview Completed': 'bg-emerald-500',
+                      'AI Finished Evaluation': 'bg-purple-500',
+                      'Violation Alert': 'bg-rose-500',
+                      'New Candidate': 'bg-cyan-500',
+                    }[n.type] || 'bg-indigo-500';
+                    return (
+                      <div
+                        key={i}
+                        className={`p-3 rounded-xl border text-xs transition-all ${
+                          !n.isRead
+                            ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-500/30'
+                            : 'bg-slate-50 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800'
+                        }`}
+                      >
+                        <div className="flex items-start gap-2">
+                          <span className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${dotColor}`} />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-slate-800 dark:text-slate-200 leading-tight">{n.title}</p>
+                            <p className="text-slate-600 dark:text-slate-400 text-[11px] mt-0.5 leading-snug">{n.message}</p>
+                            <span className="text-[10px] text-slate-400 font-mono mt-1 block">
+                              {new Date(n.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </div>
