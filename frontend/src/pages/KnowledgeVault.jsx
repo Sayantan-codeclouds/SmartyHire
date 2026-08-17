@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 import DashboardLayout from '../components/layout/DashboardLayout';
+import { useAuth } from '../context/AuthContext';
 import {
   FileText,
   Upload,
@@ -15,13 +17,24 @@ import {
   CheckCircle,
   FileCode,
   Download,
+  Lock,
+  ArrowRight,
+  ShieldCheck,
+  Brain,
+  Zap,
+  Check,
 } from 'lucide-react';
 
 const KnowledgeVault = () => {
+  const { company } = useAuth();
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [isUpgradeRequired, setIsUpgradeRequired] = useState(false);
+
+  const currentPlan = company?.plan || company?.subscription?.plan || 'Free';
+  const isPro = ['Pro', 'Professional', 'Enterprise'].includes(currentPlan);
 
   // Modals & Upload state
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -43,8 +56,12 @@ const KnowledgeVault = () => {
   const [textLoading, setTextLoading] = useState(false);
 
   useEffect(() => {
-    fetchDocuments();
-  }, []);
+    if (isPro) {
+      fetchDocuments();
+    } else {
+      setLoading(false);
+    }
+  }, [isPro]);
 
   const fetchDocuments = async () => {
     try {
@@ -53,6 +70,9 @@ const KnowledgeVault = () => {
         setDocuments(res.data.documents || []);
       }
     } catch (err) {
+      if (err.response?.status === 403 || err.response?.data?.isUpgradeRequired) {
+        setIsUpgradeRequired(true);
+      }
       console.error('[Fetch Knowledge Error]', err);
     } finally {
       setLoading(false);
@@ -140,6 +160,104 @@ const KnowledgeVault = () => {
     const matchesCategory = !categoryFilter || doc.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
+
+  if (!isPro || isUpgradeRequired) {
+    return (
+      <DashboardLayout>
+        <div className="max-w-4xl mx-auto space-y-8 py-4 animate-fade-in">
+          {/* Hero Paywall Card */}
+          <div className="glass-card p-8 md:p-10 rounded-3xl border border-violet-500/30 bg-gradient-to-b from-violet-950/30 via-slate-900/60 to-slate-950/80 shadow-2xl relative overflow-hidden text-center space-y-6">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-indigo-500/10 via-violet-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-cyan-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+            {/* Lock Badge */}
+            <div className="relative inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-violet-950/80 border border-violet-500/40 text-violet-300 text-xs font-extrabold uppercase tracking-wider shadow-lg">
+              <Lock className="w-3.5 h-3.5 text-violet-400" />
+              <span>Pro & Enterprise Feature</span>
+            </div>
+
+            <div className="space-y-3 max-w-2xl mx-auto">
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                Knowledge Base & <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-indigo-300 to-cyan-400">RAG Vault</span>
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                Knowledge Vault empowers Groq GPT-OSS 120b to interview candidates contextually against your company's actual technical architecture, culture handbooks, and hiring rubrics.
+              </p>
+            </div>
+
+            {/* Plan Tier Status */}
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+              <div className="px-4 py-2 rounded-xl bg-slate-900/80 border border-slate-800 text-xs flex items-center gap-2">
+                <span className="text-slate-500">Current Workspace Plan:</span>
+                <span className="font-extrabold text-slate-200">{currentPlan}</span>
+              </div>
+              <div className="px-4 py-2 rounded-xl bg-violet-950/60 border border-violet-500/40 text-xs flex items-center gap-2 text-violet-300">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Required: <strong className="text-white">Pro Plan (₹1,199/mo)</strong> or Enterprise</span>
+              </div>
+            </div>
+
+            {/* Upgrade CTA */}
+            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                to="/dashboard/settings"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-indigo-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Upgrade to Pro Plan</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <p className="text-[11px] text-slate-500">
+              Includes 250 AI Interviews/mo · Knowledge Vault RAG · Live Candidate Proctoring Wall · Priority Support
+            </p>
+          </div>
+
+          {/* Feature Highlights Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="glass-card p-5 rounded-2xl border border-slate-800 space-y-2 hover:border-violet-500/30 transition-all">
+              <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+                <FileText className="w-4 h-4" />
+              </div>
+              <h3 className="text-xs font-bold text-white">Custom PDF & Handbook Ingestion</h3>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                Upload internal PDF guides, team expectations, engineering standards, and benefits overviews for instant text parsing.
+              </p>
+            </div>
+
+            <div className="glass-card p-5 rounded-2xl border border-slate-800 space-y-2 hover:border-violet-500/30 transition-all">
+              <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+                <Brain className="w-4 h-4" />
+              </div>
+              <h3 className="text-xs font-bold text-white">Grounded Candidate Q&A</h3>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                When candidates ask questions during interviews about your team, stack, or perks, the AI answers directly using your documents.
+              </p>
+            </div>
+
+            <div className="glass-card p-5 rounded-2xl border border-slate-800 space-y-2 hover:border-violet-500/30 transition-all">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <Zap className="w-4 h-4" />
+              </div>
+              <h3 className="text-xs font-bold text-white">Automated Semantic Chunking</h3>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                Documents are split into semantic chunks with key topic extraction for sub-second retrieval into Groq LLM context windows.
+              </p>
+            </div>
+
+            <div className="glass-card p-5 rounded-2xl border border-slate-800 space-y-2 hover:border-violet-500/30 transition-all">
+              <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+              <h3 className="text-xs font-bold text-white">Domain-Specific Role Standards</h3>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                Ensure interview questions evaluate candidates strictly against your internal architecture benchmarks and engineering rubrics.
+              </p>
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>

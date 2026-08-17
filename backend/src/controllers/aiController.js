@@ -139,23 +139,21 @@ const answerCandidateQA = async (req, res, next) => {
     const interview = candidate?.interviewId;
     const targetCompanyId = company?._id || candidate?.companyId;
 
-    // Fetch PDF Knowledge Vault Documents for Company RAG safely
+    // Fetch PDF Knowledge Vault Documents for Company RAG (Exclusive to Pro / Enterprise plans)
     let documentKnowledge = '';
     let bankQuestions = [];
-
-    // Fetch documents matching target company or all uploaded knowledge vault documents
     let docs = [];
-    if (targetCompanyId) {
-      docs = await KnowledgeDocument.find({ companyId: targetCompanyId }).limit(10).lean();
-    }
-    if (!docs || docs.length === 0) {
-      docs = await KnowledgeDocument.find({}).limit(10).lean();
-    }
 
-    if (docs && docs.length > 0) {
-      documentKnowledge = docs
-        .map((d) => `Document "${d.title}" [Category: ${d.category || 'Policy'}]:\n${d.extractedText || d.content || ''}`)
-        .join('\n\n---\n\n');
+    const planName = company?.subscription?.plan || 'Free';
+    const isPro = ['Pro', 'Professional', 'Enterprise'].includes(planName);
+
+    if (isPro && targetCompanyId) {
+      docs = await KnowledgeDocument.find({ companyId: targetCompanyId }).limit(10).lean();
+      if (docs && docs.length > 0) {
+        documentKnowledge = docs
+          .map((d) => `Document "${d.title}" [Category: ${d.category || 'Policy'}]:\n${d.extractedText || d.content || ''}`)
+          .join('\n\n---\n\n');
+      }
     }
 
     if (targetCompanyId) {

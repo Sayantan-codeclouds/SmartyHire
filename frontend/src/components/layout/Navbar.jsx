@@ -97,7 +97,7 @@ const Navbar = ({ onOpenCommandPalette }) => {
         {/* Workspace Plan Badge */}
         <div className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-300 text-xs font-extrabold shadow-sm">
           <Sparkles className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
-          <span>{company?.plan || 'Professional'} Workspace</span>
+          <span>{company?.plan || company?.subscription?.plan || 'Free'} Plan</span>
         </div>
 
         {/* Dark / Light Mode Toggle Button */}

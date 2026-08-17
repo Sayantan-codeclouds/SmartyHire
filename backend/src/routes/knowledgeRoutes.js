@@ -11,6 +11,7 @@ const {
   deleteKnowledgeDocument,
 } = require('../controllers/knowledgeController');
 const { protect } = require('../middlewares/auth');
+const { requireProPlan } = require('../middlewares/planGuard');
 
 // Setup multer storage for document uploads
 const uploadDir = path.join(__dirname, '../../uploads/documents');
@@ -31,7 +32,9 @@ const upload = multer({
   limits: { fileSize: 15 * 1024 * 1024 }, // 15MB max PDF
 });
 
+// All knowledge / RAG routes require authenticated user + Pro/Enterprise plan
 router.use(protect);
+router.use(requireProPlan);
 
 router.get('/', getKnowledgeDocuments);
 router.post('/upload', upload.single('document'), uploadKnowledgeDocument);

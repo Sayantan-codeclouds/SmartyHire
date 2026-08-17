@@ -179,6 +179,12 @@ const login = async (req, res, next) => {
 const getMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).populate('companyId');
+    let companyData = null;
+    if (user.companyId) {
+      companyData = user.companyId.toObject ? user.companyId.toObject() : user.companyId;
+      companyData.plan = companyData.subscription?.plan || 'Free';
+    }
+
     res.status(200).json({
       success: true,
       user: {
@@ -187,7 +193,7 @@ const getMe = async (req, res, next) => {
         email: user.email,
         role: user.role,
         avatar: user.avatar || '',
-        company: user.companyId,
+        company: companyData,
       },
     });
   } catch (error) {

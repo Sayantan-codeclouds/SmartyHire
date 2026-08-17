@@ -71,7 +71,7 @@ const seed = async () => {
       isActive: true,
       features: [
         '10 AI Candidate Interviews/mo',
-        'Standard Groq AI Question Generator',
+        'Standard Groq Voice Interviewer',
         'Basic Evaluation Scorecard',
         'Community & Self-Service Support',
       ],
@@ -103,9 +103,25 @@ const seed = async () => {
       features: [
         '250 AI Candidate Interviews/mo',
         'Advanced Live Proctoring & Real-time Alerts',
-        'Knowledge Vault RAG (Upload Custom Policies)',
+        'Knowledge Vault RAG (Custom Company Docs & Handbooks)',
         'Live Candidate Session Monitoring Dashboard',
         'Priority Technical Support',
+      ],
+    },
+    {
+      name: 'Enterprise',
+      price: 4999,
+      interviewQuota: 1000,
+      billingCycle: 'monthly',
+      isPopular: false,
+      sortOrder: 4,
+      isActive: true,
+      features: [
+        '1,000 AI Candidate Interviews/mo',
+        'All Pro Features Included',
+        'Unlimited RAG Knowledge Base Documents',
+        'Custom ATS Webhook Integrations',
+        'Dedicated Account Manager & 99.9% SLA',
       ],
     },
   ]);

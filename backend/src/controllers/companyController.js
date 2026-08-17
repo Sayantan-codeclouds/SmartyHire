@@ -164,6 +164,7 @@ const updateSubscription = async (req, res, next) => {
       Free: 10,
       Starter: 50,
       Pro: 250,
+      Professional: 250,
       Enterprise: 1000,
     };
 

@@ -21,6 +21,9 @@ const Sidebar = () => {
 
   const isSuperAdmin = user?.role === 'Super Admin';
 
+  const currentPlan = company?.plan || company?.subscription?.plan || 'Free';
+  const isPro = ['Pro', 'Professional', 'Enterprise'].includes(currentPlan);
+
   const navItems = [
     { section: 'MAIN WORKSPACE' },
     { name: 'Overview', path: '/dashboard', icon: LayoutDashboard },
@@ -28,7 +31,12 @@ const Sidebar = () => {
     { name: 'Candidates', path: '/dashboard/candidates', icon: Users },
     { name: 'Pipeline Kanban', path: '/dashboard/kanban', icon: Kanban },
     { section: 'KNOWLEDGE & COMPLIANCE' },
-    { name: 'Knowledge Base & RAG', path: '/dashboard/knowledge', icon: BookOpen },
+    {
+      name: 'Knowledge Base & RAG',
+      path: '/dashboard/knowledge',
+      icon: BookOpen,
+      ...(!isPro ? { badge: 'PRO', badgeType: 'pro' } : {}),
+    },
     { name: 'Audit Logs', path: '/dashboard/audit', icon: ShieldAlert },
     { name: 'Settings', path: '/dashboard/settings', icon: Settings },
     ...(isSuperAdmin
@@ -92,7 +100,13 @@ const Sidebar = () => {
                 </div>
 
                 {item.badge && (
-                  <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-extrabold uppercase bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 animate-pulse">
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-extrabold uppercase ${
+                      item.badgeType === 'pro'
+                        ? 'bg-violet-100 dark:bg-violet-950/80 text-violet-600 dark:text-violet-400 border border-violet-200 dark:border-violet-500/30'
+                        : 'bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 animate-pulse'
+                    }`}
+                  >
                     {item.badge}
                   </span>
                 )}
