@@ -215,7 +215,7 @@ const OverviewTab = ({ stats }) => {
         </div>
         <button
           onClick={async () => {
-            if (!window.confirm('Are you sure you want to delete ALL candidates, interviews, and session data from MongoDB?')) return;
+            if (!window.confirm('Are you sure you want to delete ALL candidates, interviews, and session data from the platform database?')) return;
             try {
               const res = await api.delete('/admin/clear-data');
               if (res.data.success) {

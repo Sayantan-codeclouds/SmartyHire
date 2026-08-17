@@ -45,7 +45,7 @@ const FEATURES = [
   {
     icon: Brain,
     color: 'indigo',
-    title: 'Groq GPT-OSS 120b AI Interviewer',
+    title: 'SmartyHire Voice AI Interviewer',
     desc: 'Real-time conversational AI that adapts questioning depth based on candidate answers. Zero script, infinite intelligence.',
   },
   {
@@ -98,7 +98,7 @@ const PLANS = [
     desc: 'Get started at no cost. Perfect for exploring SmartyHire.',
     features: [
       '10 AI Interviews / month',
-      'Groq Voice Interviewer',
+      'Autonomous Voice Interviewer',
       'Basic Evaluation Scorecard',
       'Community Support',
     ],
@@ -166,7 +166,7 @@ const TESTIMONIALS = [
 const FAQS = [
   {
     q: 'How does the AI interview candidate voices?',
-    a: 'SmartyHire uses Groq Whisper for sub-500ms speech-to-text transcription, and Groq GPT-OSS 120b to generate contextual follow-up questions in real-time. The entire loop is autonomous.',
+    a: 'SmartyHire uses high-speed neural speech transcription and real-time LLM reasoning to generate contextual follow-up questions in real-time. The entire loop is autonomous.',
   },
   {
     q: 'Is the proctoring privacy-compliant?',
@@ -290,7 +290,7 @@ const LandingPage = () => {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-950/80 border border-indigo-500/30 text-xs font-semibold text-indigo-300 mb-8"
           >
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span>Powered by Groq GPT-OSS 120b • Speech latency &lt;500ms</span>
+            <span>Powered by SmartyHire Neural Engine • Speech latency &lt;500ms</span>
           </motion.div>
 
           {/* Headline */}
@@ -361,7 +361,7 @@ const LandingPage = () => {
           >
             {[
               { value: 50000, suffix: '+', label: 'Candidates Screened', color: 'text-white' },
-              { value: 500, suffix: 'ms', prefix: '<', label: 'Groq AI Latency', color: 'text-cyan-400' },
+              { value: 500, suffix: 'ms', prefix: '<', label: 'AI Voice Latency', color: 'text-cyan-400' },
               { value: 99, suffix: '.4%', label: 'Proctoring Accuracy', color: 'text-emerald-400' },
               { value: 10, suffix: '×', label: 'Faster Time-to-Hire', color: 'text-indigo-400' },
             ].map((s, i) => (
@@ -407,8 +407,8 @@ const LandingPage = () => {
                     <Bot className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-white">Groq AI Interviewer</p>
-                    <p className="text-[10px] text-indigo-400 font-mono">GPT-OSS 120b • Active</p>
+                    <p className="text-xs font-bold text-white">SmartyHire AI Interviewer</p>
+                    <p className="text-[10px] text-indigo-400 font-mono">Neural Voice Engine • Active</p>
                   </div>
                 </div>
 
@@ -421,7 +421,7 @@ const LandingPage = () => {
 
                 <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-950/50 border border-emerald-500/20">
                   <Mic className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-[11px] font-semibold text-emerald-300">Listening via Groq Whisper...</span>
+                  <span className="text-[11px] font-semibold text-emerald-300">Listening to candidate...</span>
                   <div className="ml-auto flex gap-0.5 items-end h-4">
                     {[3, 5, 4, 6, 3, 5, 7, 4].map((h, i) => (
                       <div key={i} className="w-0.5 rounded-full bg-emerald-400 animate-pulse" style={{ height: `${h * 2}px`, animationDelay: `${i * 0.1}s` }} />
@@ -521,7 +521,7 @@ const LandingPage = () => {
               {[
                 { step: '01', icon: Users, title: 'Create Interview', desc: 'Define role, skills, and difficulty. AI generates a dynamic question bank.' },
                 { step: '02', icon: Zap, title: 'Invite Candidates', desc: 'Send email invites with secure 48h-expiry links. Candidates go at their own pace.' },
-                { step: '03', icon: Mic, title: 'AI Conducts Session', desc: 'Groq AI voices questions, transcribes responses, and proctors live in fullscreen.' },
+                { step: '03', icon: Mic, title: 'AI Conducts Session', desc: 'AI voices questions, transcribes responses, and proctors live in fullscreen.' },
                 { step: '04', icon: BarChart3, title: 'Review Scorecards', desc: 'Instant AI evaluation with radar chart, score, summary, and downloadable PDF.' },
               ].map((s, i) => (
                 <motion.div
@@ -698,7 +698,7 @@ const LandingPage = () => {
             {[
               { icon: Lock,    title: 'SOC 2 Ready',        desc: 'Audit-ready security controls' },
               { icon: Globe,   title: 'India-Based',         desc: 'Data hosted locally on Atlas' },
-              { icon: Cpu,     title: 'Groq Powered',        desc: 'Fastest AI inference on earth' },
+              { icon: Cpu,     title: 'Ultra-Low Latency',   desc: 'Sub-500ms voice inference' },
               { icon: ShieldCheck, title: 'GDPR Compliant', desc: 'Consent-first proctoring design' },
             ].map((b, i) => (
               <div key={i} className="text-center p-5 rounded-2xl bg-slate-900/40 border border-slate-800">
@@ -742,7 +742,7 @@ const LandingPage = () => {
                 Ready to Hire 10× Smarter?
               </h2>
               <p className="text-sm text-slate-400 mb-8 max-w-lg mx-auto leading-relaxed">
-                Join companies that have eliminated manual phone screens and switched to autonomous Groq AI interviews with SmartyHire.
+                Join companies that have eliminated manual phone screens and switched to autonomous AI interviews with SmartyHire.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link

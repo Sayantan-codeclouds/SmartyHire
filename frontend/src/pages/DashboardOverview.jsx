@@ -78,7 +78,7 @@ const DashboardOverview = () => {
             <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
               Workspace Overview <Sparkles className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
             </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Real-time candidate pipelines and Groq AI interview metrics</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Real-time candidate pipelines and AI interview metrics</p>
           </div>
 
           <Link
@@ -104,7 +104,7 @@ const DashboardOverview = () => {
                 </span>
               </h4>
               <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
-                Metrics calculated directly from live MongoDB database candidate scorecards.
+                Metrics calculated directly from live candidate scorecards.
               </p>
             </div>
           </div>
@@ -142,7 +142,7 @@ const DashboardOverview = () => {
               </div>
             </div>
             <p className="text-3xl font-extrabold text-slate-900 dark:text-white">{stats.completedInterviews}</p>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Evaluated by Groq AI</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Evaluated by SmartyHire AI</p>
           </div>
 
           <div className="glass-card p-6 rounded-2xl space-y-3 relative overflow-hidden group">
@@ -222,7 +222,7 @@ const DashboardOverview = () => {
         <div className="glass-card rounded-2xl overflow-hidden shadow-2xl">
           <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              Recent Candidate Directory (MongoDB Live)
+              Recent Candidate Directory
             </h3>
             <Link to="/dashboard/candidates" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-1">
               View Directory →
@@ -236,7 +236,7 @@ const DashboardOverview = () => {
                   <th className="p-4">Candidate</th>
                   <th className="p-4">Applied Role</th>
                   <th className="p-4">Pipeline Status</th>
-                  <th className="p-4">Groq AI Score</th>
+                  <th className="p-4">AI Score</th>
                   <th className="p-4">Recommendation</th>
                   <th className="p-4 text-right">Actions</th>
                 </tr>

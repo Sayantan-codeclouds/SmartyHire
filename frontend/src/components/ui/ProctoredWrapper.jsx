@@ -37,7 +37,7 @@ const ProctoredWrapper = ({
 
     if (onViolation) onViolation(newViolation);
 
-    // Log violation to MongoDB backend
+    // Log violation to workspace backend
     if (candidateId) {
       api.post('/candidates/violation', {
         candidateId,

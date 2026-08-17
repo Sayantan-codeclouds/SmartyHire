@@ -86,7 +86,7 @@ const InterviewCreateWizard = () => {
             Create AI Interview <Sparkles className="w-5 h-5 text-indigo-400" />
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Groq GPT-OSS 120b will automatically generate structured questions from your Job Description.
+            SmartyHire AI will automatically generate structured questions from your Job Description.
           </p>
         </div>
 
@@ -182,7 +182,7 @@ const InterviewCreateWizard = () => {
                 value={skillsRequired}
                 onChange={(e) => setSkillsRequired(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-900/80 border border-slate-800 focus:border-indigo-500 focus:outline-none text-xs text-slate-100"
-                placeholder="React 19, Node.js, TypeScript, Groq"
+                placeholder="React, Node.js, TypeScript, System Design"
               />
             </div>
 
@@ -194,7 +194,7 @@ const InterviewCreateWizard = () => {
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
                 className="w-full p-4 rounded-xl bg-slate-900/80 border border-slate-800 focus:border-indigo-500 focus:outline-none text-xs text-slate-100 placeholder-slate-500"
-                placeholder="Paste full job description here... Groq AI will extract key competencies and formulate interview questions."
+                placeholder="Paste full job description here... SmartyHire AI will extract key competencies and formulate interview questions."
               />
             </div>
           </div>
@@ -236,7 +236,7 @@ const InterviewCreateWizard = () => {
             disabled={loading}
             className="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-extrabold text-xs transition-all shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-2"
           >
-            {loading ? 'Groq AI Generating Questions...' : 'Generate AI Interview & Publish'}
+            {loading ? 'AI Generating Questions...' : 'Generate AI Interview & Publish'}
             <Sparkles className="w-4 h-4" />
           </button>
         </form>

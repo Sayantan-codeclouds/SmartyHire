@@ -146,7 +146,7 @@ const QuestionBank = () => {
               className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-xs font-bold text-slate-200 transition-all flex items-center gap-2 cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span>Generate with Groq AI</span>
+              <span>Generate with AI</span>
             </button>
 
             <button
@@ -204,7 +204,7 @@ const QuestionBank = () => {
             <FileQuestion className="w-10 h-10 text-slate-500 mx-auto opacity-60" />
             <h3 className="text-sm font-bold text-slate-200">No Question Blueprints Found</h3>
             <p className="text-xs text-slate-400 max-w-sm mx-auto">
-              No questions match your current search filters. Create a new question or use Groq AI generator.
+              No questions match your current search filters. Create a new question or use AI generator.
             </p>
           </div>
         ) : (
@@ -484,8 +484,8 @@ const QuestionBank = () => {
 
             <div className="text-center mb-6">
               <Sparkles className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
-              <h3 className="text-lg font-extrabold text-white">Groq AI Question Generator</h3>
-              <p className="text-xs text-slate-400 mt-1">Auto-generate 3 questions using Groq GPT-OSS 120b</p>
+              <h3 className="text-lg font-extrabold text-white">AI Question Generator</h3>
+              <p className="text-xs text-slate-400 mt-1">Auto-generate 3 questions using SmartyHire AI</p>
             </div>
 
             <form onSubmit={handleGenerateAIBlueprints} className="space-y-4">

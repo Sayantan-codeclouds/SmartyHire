@@ -131,7 +131,7 @@ const PublicInterviewLanding = () => {
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                <span>Groq AI engine will adapt follow-up questions in real-time.</span>
+                <span>SmartyHire AI engine will adapt follow-up questions in real-time.</span>
               </li>
             </ul>
           </div>

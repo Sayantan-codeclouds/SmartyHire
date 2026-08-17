@@ -62,7 +62,7 @@ app.get('/api/health', (req, res) => {
     status: 'online',
     app: 'SmartyHire AI Engine',
     timestamp: new Date(),
-    aiEngine: process.env.GROQ_API_KEY ? 'Groq GPT-OSS 120b (Live Key Active)' : 'Groq AI Service (Fallback Active)',
+    aiEngine: process.env.GROQ_API_KEY ? 'SmartyHire Neural Engine (Active)' : 'SmartyHire AI Engine (Ready)',
   });
 });
 
@@ -88,6 +88,6 @@ server.listen(PORT, () => {
   console.log(`====================================================`);
   console.log(`🚀 SmartyHire AI Backend API running on port ${PORT}`);
   console.log(`📡 Socket.io Proctoring Live Server Ready`);
-  console.log(`⚡ Groq AI Integration Loaded`);
+  console.log(`⚡ SmartyHire Neural AI Engine Loaded`);
   console.log(`====================================================`);
 });

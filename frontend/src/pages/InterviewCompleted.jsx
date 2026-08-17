@@ -41,7 +41,7 @@ const InterviewCompleted = () => {
 
   const processingSteps = [
     { icon: Cpu,       label: 'Parsing voice transcripts',          done: step >= 1 },
-    { icon: BarChart2, label: 'Scoring responses with Groq AI',     done: step >= 2 },
+    { icon: BarChart2, label: 'Scoring candidate responses',        done: step >= 2 },
     { icon: ShieldCheck,label: 'Compiling proctoring trust report', done: step >= 3 },
     { icon: Sparkles,  label: 'Generating final scorecard',         done: step >= 4 },
   ];
@@ -65,7 +65,7 @@ const InterviewCompleted = () => {
             <div>
               <h1 className="text-3xl font-extrabold text-white">Interview Submitted!</h1>
               <p className="text-sm text-slate-400 mt-2 leading-relaxed max-w-sm mx-auto">
-                Your responses have been recorded. The SmartyHire Groq AI engine is now analysing your session.
+                Your responses have been recorded. The SmartyHire AI engine is now analysing your session.
               </p>
             </div>
 

@@ -47,7 +47,7 @@ const generateCandidatePDFReport = async (candidate, report, interview, company)
       });
 
       // Executive AI Summary
-      doc.fillColor('#0F172A').fontSize(13).font('Helvetica-Bold').text('Executive Groq AI Rationale', 40, y + 35);
+      doc.fillColor('#0F172A').fontSize(13).font('Helvetica-Bold').text('Executive AI Rationale', 40, y + 35);
       doc.fontSize(9).font('Helvetica').fillColor('#334155').text(report.aiSummaryExplanation || 'N/A', 40, y + 52, { width: 515 });
 
       // PAGE 2: FULL SET OF QUESTIONS & ANSWERS TRANSCRIPT

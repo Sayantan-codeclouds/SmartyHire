@@ -181,7 +181,7 @@ const KnowledgeVault = () => {
                 Knowledge Base & <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-indigo-300 to-cyan-400">RAG Vault</span>
               </h1>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                Knowledge Vault empowers Groq GPT-OSS 120b to interview candidates contextually against your company's actual technical architecture, culture handbooks, and hiring rubrics.
+                Knowledge Vault empowers SmartyHire AI to interview candidates contextually against your company's actual technical architecture, culture handbooks, and hiring rubrics.
               </p>
             </div>
 
@@ -240,7 +240,7 @@ const KnowledgeVault = () => {
               </div>
               <h3 className="text-xs font-bold text-white">Automated Semantic Chunking</h3>
               <p className="text-[11px] text-slate-400 leading-relaxed">
-                Documents are split into semantic chunks with key topic extraction for sub-second retrieval into Groq LLM context windows.
+                Documents are split into semantic chunks with key topic extraction for sub-second retrieval into AI context windows.
               </p>
             </div>
 
@@ -303,7 +303,7 @@ const KnowledgeVault = () => {
                 Active Company RAG Index: {documents.length} Documents Loaded
               </h3>
               <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-                When candidates ask questions during interviews (e.g. asking about company culture, stack, policies, or expectations), Groq GPT-OSS 120b uses the extracted text from these PDF documents to generate grounded, accurate RAG responses.
+                When candidates ask questions during interviews (e.g. asking about company culture, stack, policies, or expectations), SmartyHire AI uses the extracted text from these PDF documents to generate grounded, accurate RAG responses.
               </p>
             </div>
           </div>

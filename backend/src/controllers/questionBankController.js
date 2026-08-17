@@ -39,8 +39,8 @@ const getQuestionBank = async (req, res, next) => {
         },
         {
           companyId: req.user.companyId,
-          title: 'Groq LLM RAG Pipeline Fine-tuning',
-          questionText: 'How would you architect a low-latency Retrieval-Augmented Generation (RAG) system using vector databases and Groq LLM completion endpoints?',
+          title: 'Low-Latency LLM RAG Pipeline Architecture',
+          questionText: 'How would you architect a low-latency Retrieval-Augmented Generation (RAG) system using vector embeddings and high-speed LLM completion endpoints?',
           type: 'Technical',
           difficulty: 'Lead',
           competency: 'AI Infrastructure',

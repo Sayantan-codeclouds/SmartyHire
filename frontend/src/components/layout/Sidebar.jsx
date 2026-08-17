@@ -116,15 +116,15 @@ const Sidebar = () => {
         </nav>
       </div>
 
-      {/* Groq AI Infrastructure Footer Pill */}
+      {/* SmartyHire AI Engine Footer Pill */}
       <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-indigo-500/20 space-y-1.5">
         <div className="flex items-center justify-between text-[10px]">
           <span className="font-extrabold text-indigo-600 dark:text-indigo-300 flex items-center gap-1.5 font-mono">
-            <Bot className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" /> Groq AI Engine
+            <Bot className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" /> SmartyHire AI Engine
           </span>
           <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
         </div>
-        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">GPT-OSS 120b & Whisper v3 Active</p>
+        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Neural Voice & Speech Active</p>
       </div>
     </aside>
   );
