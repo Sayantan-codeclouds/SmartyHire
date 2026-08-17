@@ -57,7 +57,8 @@ const Settings = () => {
   const [name, setName] = useState(company?.name || '');
   const [brandColor, setBrandColor] = useState(company?.brandColor || '#6366F1');
   const [apiKey, setApiKey] = useState(company?.apiKey || '');
-  const [saved, setSaved] = useState(false);
+  const [savedBranding, setSavedBranding] = useState(false);
+  const [savedPolicy, setSavedPolicy] = useState(false);
   const [copied, setCopied] = useState(false);
   const [cooldownMonths, setCooldownMonths] = useState(
     company?.settings?.candidateCooldownMonths ?? 3
@@ -89,21 +90,36 @@ const Settings = () => {
     fetchData();
   }, []);
 
-  const handleSaveSettings = async (e) => {
+  const handleSaveBranding = async (e) => {
     e.preventDefault();
     try {
       const res = await api.put('/company/settings', {
         name,
         brandColor,
+      });
+      if (res.data.success) {
+        setCompany(res.data.company);
+        setSavedBranding(true);
+        setTimeout(() => setSavedBranding(false), 2500);
+      }
+    } catch (err) {
+      console.error('[Branding Save Error]', err);
+    }
+  };
+
+  const handleSavePolicy = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await api.put('/company/settings', {
         settings: { candidateCooldownMonths: Number(cooldownMonths) },
       });
       if (res.data.success) {
         setCompany(res.data.company);
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2500);
+        setSavedPolicy(true);
+        setTimeout(() => setSavedPolicy(false), 2500);
       }
     } catch (err) {
-      console.error('[Settings Save Error]', err);
+      console.error('[Policy Save Error]', err);
     }
   };
 
@@ -242,7 +258,7 @@ const Settings = () => {
         )}
 
         {/* 1. Company Identity & Branding */}
-        <form onSubmit={handleSaveSettings} className="glass-card p-6 rounded-3xl border border-slate-800 space-y-5">
+        <form onSubmit={handleSaveBranding} className="glass-card p-6 rounded-3xl border border-slate-800 space-y-5">
           <h3 className="text-sm font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-2">
             <Building className="w-4 h-4" /> Company Identity & Branding
           </h3>
@@ -271,14 +287,14 @@ const Settings = () => {
           </div>
           <button
             type="submit"
-            className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-all shadow-md flex items-center gap-2"
+            className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer"
           >
-            {saved ? <><Check className="w-4 h-4" /> Saved!</> : 'Save Changes'}
+            {savedBranding ? <><Check className="w-4 h-4" /> Saved!</> : 'Save Changes'}
           </button>
         </form>
 
         {/* 2. Interview Access Policy */}
-        <form onSubmit={handleSaveSettings} className="glass-card p-6 rounded-3xl border border-slate-800 space-y-5">
+        <form onSubmit={handleSavePolicy} className="glass-card p-6 rounded-3xl border border-slate-800 space-y-5">
           <h3 className="text-sm font-bold text-amber-300 uppercase tracking-wider flex items-center gap-2">
             <TimerReset className="w-4 h-4" /> Interview Access Policy
           </h3>
@@ -296,7 +312,7 @@ const Settings = () => {
                   key={months}
                   type="button"
                   onClick={() => setCooldownMonths(months)}
-                  className={`py-3 rounded-xl border text-xs font-bold transition-all flex flex-col items-center gap-1 ${
+                  className={`py-3 rounded-xl border text-xs font-bold transition-all flex flex-col items-center gap-1 cursor-pointer ${
                     Number(cooldownMonths) === months
                       ? 'bg-amber-950/60 border-amber-500/60 text-amber-300 shadow-lg shadow-amber-950/40'
                       : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-300'
@@ -316,9 +332,9 @@ const Settings = () => {
 
           <button
             type="submit"
-            className="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs transition-all shadow-md flex items-center gap-2"
+            className="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs transition-all shadow-md flex items-center gap-2 cursor-pointer"
           >
-            {saved ? <><Check className="w-4 h-4" /> Saved!</> : 'Save Access Policy'}
+            {savedPolicy ? <><Check className="w-4 h-4" /> Saved!</> : 'Save Access Policy'}
           </button>
         </form>
 
